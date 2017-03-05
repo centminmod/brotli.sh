@@ -50,7 +50,7 @@ Resulting files
     -rw-r--r--  1 nginx nginx 8.6K Jul 25  2016 bootstrap.min.js.br
     -rw-r--r--  1 nginx nginx 9.3K Jul 25  2016 bootstrap.min.js.gz
 
-Example clean appended flag
+Example `clean` appended flag
 
     ./brotli.sh /usr/local/nginx/html/brotlitest2 clean
     rm -rf /usr/local/nginx/html/brotlitest2/bootstrap.min.js.br
@@ -59,7 +59,7 @@ Example clean appended flag
     cleaned up brotli *.br static css & js files
     recursively under /usr/local/nginx/html/brotlitest2
 
-Example clean appended flag with `GGZIP=y` flag enabled
+Example `clean` appended flag with `GGZIP=y` flag enabled
 
     ./brotli.sh /usr/local/nginx/html/brotlitest2 clean
     rm -rf /usr/local/nginx/html/brotlitest2/bootstrap.min.js.br
