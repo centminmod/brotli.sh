@@ -59,7 +59,7 @@ Example `clean` appended flag
     cleaned up brotli *.br static css & js files
     recursively under /usr/local/nginx/html/brotlitest2
 
-Example `clean` appended flag with `GGZIP=y` flag enabled
+Example `clean` appended flag with `GZIP=y` flag enabled
 
     ./brotli.sh /usr/local/nginx/html/brotlitest2 clean
     rm -rf /usr/local/nginx/html/brotlitest2/bootstrap.min.js.br
