@@ -23,6 +23,24 @@ CPUS=$(grep -c "processor" /proc/cpuinfo)
 #############
 SCRIPT_DIR=$(readlink -f $(dirname ${BASH_SOURCE[0]}))
 
+if [ ! -f /usr/local/bin/bro ]; then
+  if [ -d /svr-setup ]; then
+    cd /svr-setup
+  else
+    cd /usr/local/src
+  fi
+  git clone https://github.com/google/brotli.git
+  cd brotli
+  python setup.py install
+  make -j${CPUS}
+  if [ -d /svr-setup ]; then
+    ls -lah /svr-setup/brotli/bin/bro
+  else
+    ls -lah /usr/local/src/brotli/bin/bro
+  fi
+  \cp -af bin/bro /usr/local/bin/bro
+fi
+
 if [ ! -f /usr/bin/pigz ]; then
     yum -q -y install pigz
     if [ ! -f /usr/bin/pigz ]; then
