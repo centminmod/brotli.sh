@@ -11,13 +11,29 @@ DT=`date +"%d%m%y-%H%M%S"`
 USER=nginx
 GROUP=nginx
 CHMOD=644
-DBEUG='n'
+DBEUG=n
+
+# Also enable gzip compression for css and js
+GZIP=y
 
 LOGDIR='/var/log/brotli'
+CPUS=$(grep -c "processor" /proc/cpuinfo)
 ######################################################
 # functions
 #############
 SCRIPT_DIR=$(readlink -f $(dirname ${BASH_SOURCE[0]}))
+
+if [ ! -f /usr/bin/pigz ]; then
+    yum -q -y install pigz
+    if [ ! -f /usr/bin/pigz ]; then
+      echo "/usr/bin/pigz still not found"
+      exit
+    fi
+fi
+
+if [ ! -f /usr/bin/pigz ]; then
+  GZIP_PIGZ='n'
+fi
 
 if [ ! -d "$LOGDIR" ]; then
   mkdir -p "$LOGDIR"
@@ -25,6 +41,16 @@ fi
 
 if [ -f "$SCRIPT_DIR/brotli-config.ini" ]; then
   source "$SCRIPT_DIR/brotli-config.ini"
+fi
+
+if [ "$CPUS" -lt 2 ]; then
+  GZIP_PIGZ='n'
+  GZIP_BIN='/usr/bin/gzip'
+  GZIP_BINOPT='-6'
+else
+  GZIP_PIGZ='y'
+  GZIP_BIN='/usr/bin/pigz'
+  GZIP_BINOPT='-11k'
 fi
 
 brotli_compress() {
@@ -41,14 +67,36 @@ brotli_compress() {
         /usr/local/bin/bro --force --input "${f}" --output "${f}.br"
         chown ${USER}:${GROUP} "${f}.br"
         chmod $CHMOD "${f}.br"
+        if [[ "$GZIP" = [Yy] ]]; then
+          if [[ "$GZIP_PIGZ" = [Yy] ]]; then
+            if [[ "$DEBUG" = [yY] ]]; then
+              echo "$GZIP_BIN $GZIP_BINOPT "${f}""
+            fi
+            $GZIP_BIN $GZIP_BINOPT "${f}"
+          else
+            $GZIP_BIN $GZIP_BINOPT -c  -- "${f}" > "${f}.gz"
+          fi
+          if [[ "$DEBUG" = [yY] ]]; then
+            echo "chown ${USER}:${GROUP} "${f}.gz""
+            echo "chmod $CHMOD "${f}.gz""
+          fi
+          chown ${USER}:${GROUP} "${f}.gz"
+          chmod $CHMOD "${f}.gz"
+        fi
       fi
     fi
     if [[ "$BROTLI_CLEAN" = 'clean' ]]; then
       if [ -f "${f}.br" ]; then
         if [[ "$DEBUG" = [yY] ]]; then
           echo "rm -rf ${f}.br"
+          if [[ "$GZIP" = [Yy] ]]; then
+            echo "rm -rf "${f}.gz""
+          fi
         fi
         rm -rf "${f}.br"
+        if [[ "$GZIP" = [Yy] ]]; then
+          rm -rf "${f}.gz"
+        fi
       fi
     fi
   done
@@ -65,14 +113,36 @@ brotli_compress() {
         /usr/local/bin/bro --force --input "${f}" --output "${f}.br"
         chown ${USER}:${GROUP} "${f}.br"
         chmod $CHMOD "${f}.br"
+        if [[ "$GZIP" = [Yy] ]]; then
+          if [[ "$GZIP_PIGZ" = [Yy] ]]; then
+            if [[ "$DEBUG" = [yY] ]]; then
+              echo "$GZIP_BIN $GZIP_BINOPT "${f}""
+            fi
+            $GZIP_BIN $GZIP_BINOPT "${f}"
+          else
+            $GZIP_BIN $GZIP_BINOPT -c  -- "${f}" > "${f}.gz"
+          fi
+          if [[ "$DEBUG" = [yY] ]]; then
+            echo "chown ${USER}:${GROUP} "${f}.gz""
+            echo "chmod $CHMOD "${f}.gz""
+          fi
+          chown ${USER}:${GROUP} "${f}.gz"
+          chmod $CHMOD "${f}.gz"
+        fi
       fi
     fi
     if [[ "$BROTLI_CLEAN" = 'clean' ]]; then
       if [ -f "${f}.br" ]; then
         if [[ "$DEBUG" = [yY] ]]; then
           echo "rm -rf ${f}.br"
+          if [[ "$GZIP" = [Yy] ]]; then
+            echo "rm -rf "${f}.gz""
+          fi
         fi
         rm -rf "${f}.br"
+        if [[ "$GZIP" = [Yy] ]]; then
+          rm -rf "${f}.gz"
+        fi
       fi
     fi
   done
