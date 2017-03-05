@@ -1,4 +1,6 @@
 brotli.sh
+===============
+
 
 tool to auto compress css and js files by specifying path. Appending clean flag on end of directory path will remove any *.br compressed files
 
@@ -7,7 +9,7 @@ tool to auto compress css and js files by specifying path. Appending clean flag 
     /root/tools/brotli.sh /path/to/parent/directory
     /root/tools/brotli.sh /path/to/parent/directory clean
 
-Default is non-debug mode without any verbose output. You can set `DEBUG=y` in separate config file `brotli-config.ini` located ins ame directory as `brotli.sh` which will enable debug mode for more verbose output.
+Default is non-debug mode without any verbose output. You can set `DEBUG=y` in separate config file `brotli-config.ini` located in same directory as `brotli.sh` which will enable debug mode for more verbose output.
 
 Example:
 
@@ -27,3 +29,14 @@ Example clean appended flag
     
     cleaned up brotli *.br static css & js files
     recursively under /usr/local/nginx/html/brotlitest2
+
+Variables
+===============
+
+`brotli.sh` runs are logged to directory defined by variable `LOGDIR='/var/log/brotli'`. You can override this path in separate config file `brotli-config.ini` located in same directory as `brotli.sh` by setting your own `LOGDIR` variable path
+
+Other variables you can override n separate config file `brotli-config.ini` located in same directory as `brotli.sh` include the user and group file permissions of the resulting brotli *.br compressed files:
+
+    USER=nginx
+    GROUP=nginx
+    CHMOD=644
