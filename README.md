@@ -35,6 +35,15 @@ Variables
 
 `brotli.sh` runs are logged to directory defined by variable `LOGDIR='/var/log/brotli'`. You can override this path in separate config file `brotli-config.ini` located in same directory as `brotli.sh` by setting your own `LOGDIR` variable path
 
+    ls -lah /var/log/brotli/
+    total 24K
+    drwxr-xr-x   2 root root 4.0K Mar  5 14:03 .
+    drwxr-xr-x. 13 root root 4.0K Mar  5 13:56 ..
+    -rw-r--r--   1 root root  574 Mar  5 13:56 brotli.sh_050317-135652.log
+    -rw-r--r--   1 root root  222 Mar  5 13:57 brotli.sh_050317-135701.log
+    -rw-r--r--   1 root root  574 Mar  5 14:01 brotli.sh_050317-140151.log
+    -rw-r--r--   1 root root  222 Mar  5 14:03 brotli.sh_050317-140341.log
+
 Other variables you can override n separate config file `brotli-config.ini` located in same directory as `brotli.sh` include the user and group file permissions of the resulting brotli *.br compressed files:
 
     USER=nginx
