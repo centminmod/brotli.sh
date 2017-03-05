@@ -13,8 +13,12 @@ GROUP=nginx
 CHMOD=644
 DBEUG=n
 
+# Brotli settings
+BROTLI_LEVEL=11
+
 # Also enable gzip compression for css and js
 GZIP=y
+GZIP_LEVEL=11
 
 LOGDIR='/var/log/brotli'
 CPUS=$(grep -c "processor" /proc/cpuinfo)
@@ -39,6 +43,9 @@ if [ ! -f /usr/local/bin/bro ]; then
     ls -lah /usr/local/src/brotli/bin/bro
   fi
   \cp -af bin/bro /usr/local/bin/bro
+elif [ -f /usr/local/bin/bro ]; then
+  BROTLI_BIN='/usr/local/bin/bro'
+  BROTLI_BINOPT="--quality $BROTLI_LEVEL --force"
 fi
 
 if [ ! -f /usr/bin/pigz ]; then
@@ -64,11 +71,12 @@ fi
 if [ "$CPUS" -lt 2 ]; then
   GZIP_PIGZ='n'
   GZIP_BIN='/usr/bin/gzip'
-  GZIP_BINOPT='-6'
+  GZIP_LEVEL=4
+  GZIP_BINOPT="-${GZIP_LEVEL}"
 else
   GZIP_PIGZ='y'
   GZIP_BIN='/usr/bin/pigz'
-  GZIP_BINOPT='-11k'
+  GZIP_BINOPT="-${GZIP_LEVEL}k -f"
 fi
 
 brotli_compress() {
@@ -77,12 +85,12 @@ brotli_compress() {
   do
     if [[ "$BROTLI_CLEAN" != 'clean' ]]; then
       if [[ "$DEBUG" = [yY] ]]; then
-        echo "/usr/local/bin/bro --force --input ${f} --output ${f}.br"
+        echo "$BROTLI_BIN $BROTLI_BINOPT --input ${f} --output ${f}.br"
         echo "chown ${USER}:${GROUP} ${f}.br"
         echo "chmod $CHMOD ${f}.br"
       fi
       if [ -f "${f}" ]; then
-        /usr/local/bin/bro --force --input "${f}" --output "${f}.br"
+        $BROTLI_BIN $BROTLI_BINOPT --input "${f}" --output "${f}.br"
         chown ${USER}:${GROUP} "${f}.br"
         chmod $CHMOD "${f}.br"
         if [[ "$GZIP" = [Yy] ]]; then
@@ -123,12 +131,12 @@ brotli_compress() {
   do
     if [[ "$BROTLI_CLEAN" != 'clean' ]]; then
       if [[ "$DEBUG" = [yY] ]]; then
-        echo "/usr/local/bin/bro --force --input ${f} --output ${f}.br"
+        echo "$BROTLI_BIN $BROTLI_BINOPT --input ${f} --output ${f}.br"
         echo "chown ${USER}:${GROUP} ${f}.br"
         echo "chmod $CHMOD ${f}.br"
       fi
       if [ -f "${f}" ]; then
-        /usr/local/bin/bro --force --input "${f}" --output "${f}.br"
+        $BROTLI_BIN $BROTLI_BINOPT --input "${f}" --output "${f}.br"
         chown ${USER}:${GROUP} "${f}.br"
         chmod $CHMOD "${f}.br"
         if [[ "$GZIP" = [Yy] ]]; then
