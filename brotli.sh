@@ -90,7 +90,11 @@ brotli_compress() {
         echo "chmod $CHMOD ${f}.br"
       fi
       if [ -f "${f}" ]; then
-        $BROTLI_BIN $BROTLI_BINOPT --input "${f}" --output "${f}.br"
+        if [[ "$DEBUG" = [yY] ]]; then
+          /usr/bin/time --format='real: %es user: %Us sys: %Ss cpu: %P maxmem: %M KB cswaits: %w' $BROTLI_BIN $BROTLI_BINOPT --input "${f}" --output "${f}.br"
+        else
+          $BROTLI_BIN $BROTLI_BINOPT --input "${f}" --output "${f}.br"
+        fi
         chown ${USER}:${GROUP} "${f}.br"
         chmod $CHMOD "${f}.br"
         if [[ "$GZIP" = [Yy] ]]; then
@@ -98,9 +102,17 @@ brotli_compress() {
             if [[ "$DEBUG" = [yY] ]]; then
               echo "$GZIP_BIN $GZIP_BINOPT "${f}""
             fi
-            $GZIP_BIN $GZIP_BINOPT "${f}"
+            if [[ "$DEBUG" = [yY] ]]; then
+              /usr/bin/time --format='real: %es user: %Us sys: %Ss cpu: %P maxmem: %M KB cswaits: %w' $GZIP_BIN $GZIP_BINOPT "${f}"
+            else
+              $GZIP_BIN $GZIP_BINOPT "${f}"
+            fi
           else
-            $GZIP_BIN $GZIP_BINOPT -c  -- "${f}" > "${f}.gz"
+            if [[ "$DEBUG" = [yY] ]]; then
+              /usr/bin/time --format='real: %es user: %Us sys: %Ss cpu: %P maxmem: %M KB cswaits: %w' $GZIP_BIN $GZIP_BINOPT -c  -- "${f}" > "${f}.gz"
+            else
+              $GZIP_BIN $GZIP_BINOPT -c  -- "${f}" > "${f}.gz"
+            fi
           fi
           if [[ "$DEBUG" = [yY] ]]; then
             echo "chown ${USER}:${GROUP} "${f}.gz""
@@ -136,7 +148,11 @@ brotli_compress() {
         echo "chmod $CHMOD ${f}.br"
       fi
       if [ -f "${f}" ]; then
-        $BROTLI_BIN $BROTLI_BINOPT --input "${f}" --output "${f}.br"
+        if [[ "$DEBUG" = [yY] ]]; then
+          /usr/bin/time --format='real: %es user: %Us sys: %Ss cpu: %P maxmem: %M KB cswaits: %w' $BROTLI_BIN $BROTLI_BINOPT --input "${f}" --output "${f}.br"
+        else
+          $BROTLI_BIN $BROTLI_BINOPT --input "${f}" --output "${f}.br"
+        fi
         chown ${USER}:${GROUP} "${f}.br"
         chmod $CHMOD "${f}.br"
         if [[ "$GZIP" = [Yy] ]]; then
@@ -144,9 +160,17 @@ brotli_compress() {
             if [[ "$DEBUG" = [yY] ]]; then
               echo "$GZIP_BIN $GZIP_BINOPT "${f}""
             fi
-            $GZIP_BIN $GZIP_BINOPT "${f}"
+            if [[ "$DEBUG" = [yY] ]]; then
+              /usr/bin/time --format='real: %es user: %Us sys: %Ss cpu: %P maxmem: %M KB cswaits: %w' $GZIP_BIN $GZIP_BINOPT "${f}"
+            else
+              $GZIP_BIN $GZIP_BINOPT "${f}"
+            fi
           else
-            $GZIP_BIN $GZIP_BINOPT -c  -- "${f}" > "${f}.gz"
+            if [[ "$DEBUG" = [yY] ]]; then
+              /usr/bin/time --format='real: %es user: %Us sys: %Ss cpu: %P maxmem: %M KB cswaits: %w' $GZIP_BIN $GZIP_BINOPT -c  -- "${f}" > "${f}.gz"
+            else
+              $GZIP_BIN $GZIP_BINOPT -c  -- "${f}" > "${f}.gz"
+            fi
           fi
           if [[ "$DEBUG" = [yY] ]]; then
             echo "chown ${USER}:${GROUP} "${f}.gz""
