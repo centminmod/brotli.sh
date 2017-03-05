@@ -198,7 +198,7 @@ brotli_compress() {
   done
   if [[ "$BROTLI_CLEAN" = 'clean' ]]; then
     echo
-    echo "cleaned up brotli *.br static css & js files"
+    echo "cleaned up brotli *.br & *.gz static css & js files"
     echo "recursively under $DIR_PATH"
     echo
   fi
