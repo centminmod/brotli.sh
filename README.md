@@ -5,13 +5,22 @@ brotli.sh
 * Forum Guide: [https://community.centminmod.com/posts/45818/](https://community.centminmod.com/posts/45818/)
 
 
-`brotli.sh` tool to auto compress css and js files by specifying path on CentOS based Centmin Mod LEMP web stack servers. Appending clean flag on end of directory path will remove any `*.br` or `*.gz` compressed files. I usually place my tools at `/root/tools` but you can place `brotli.sh` whereever you want.
+`brotli.sh` tool to auto compress css and js files by specifying path on [CentOS based Centmin Mod LEMP web stack](https://centminmod.com/) servers. Appending clean flag on end of directory path will remove any `*.br` or `*.gz` compressed files. I usually place my tools at `/root/tools` but you can place `brotli.sh` whereever you want.
 
     Usage
     
     /root/tools/brotli.sh /path/to/parent/directory
     /root/tools/brotli.sh /path/to/parent/directory clean
     /root/tools/brotli.sh /path/to/parent/directory display
+
+brotli.sh Requirements
+===============
+
+* CentOS with YUM repo for pigz package or you can manually install pigz for your Linux distro before running `brotli.sh`
+* git for installing Google Brotli binary from their Github repo
+
+brotli.sh Info
+===============
 
 First time you run `brotli.sh` tool, it will detect if Brotli binary is located at `/usr/local/bin/bro` and if pigz binary is located at `/usr/bin/pigz`. If they are not detected, `brotli.sh` tool will install Brotli binary from official source compile available from [Google's Brotli Github repo](https://github.com/google/brotli) and install pigz from YUM repo if available.
 
