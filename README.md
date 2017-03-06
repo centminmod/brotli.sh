@@ -13,6 +13,8 @@ brotli.sh
     /root/tools/brotli.sh /path/to/parent/directory clean
     /root/tools/brotli.sh /path/to/parent/directory display
 
+You may want to run a cronjob to automatically run `brotli.sh` tool on a specific directory every 24hrs etc. Reason why is Nginx `gzip_static` and `brotli_static` directives will serve the pre-compressed `*.br` or `*.gz` files whenever they are detected. If you update your site's css or js files, then the pre-compressed `*.br` or `*.gz` will be out of date and need recompressing. You may want to add a Nginx or web server restart command to cronjob too.
+
 brotli.sh Requirements
 ===============
 
