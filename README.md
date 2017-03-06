@@ -12,6 +12,8 @@ brotli.sh
     /root/tools/brotli.sh /path/to/parent/directory
     /root/tools/brotli.sh /path/to/parent/directory clean
 
+First time you run `brotli.sh` tool, it will detect if Brotli binary is located at `/usr/local/bin/bro` and if pigz binary is located at `/usr/bin/pigz`. If they are not detected, `brotli.sh` tool will install Brotli binary from official source compile available from [Google's Brotli Github repo](https://github.com/google/brotli) and install pigz from YUM repo if available.
+
 Default is to enable debug mode with verbose output. You can set `DEBUG=y` or `DEBUG=n` in separate config file `brotli-config.ini` located in same directory as `brotli.sh` which will enable or disabledebug mode for more verbose output.
 
 Example running `brotli.sh` passing the directory path on command line `/usr/local/nginx/html/brotlitest2`:
