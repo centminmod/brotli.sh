@@ -12,7 +12,7 @@ brotli.sh
     /root/tools/brotli.sh /path/to/parent/directory
     /root/tools/brotli.sh /path/to/parent/directory clean
 
-Default is non-debug mode without any verbose output. You can set `DEBUG=y` in separate config file `brotli-config.ini` located in same directory as `brotli.sh` which will enable debug mode for more verbose output.
+Default is to enable debug mode with verbose output. You can set `DEBUG=y` or `DEBUG=n` in separate config file `brotli-config.ini` located in same directory as `brotli.sh` which will enable or disabledebug mode for more verbose output.
 
 Example running `brotli.sh` passing the directory path on command line `/usr/local/nginx/html/brotlitest2`:
 
