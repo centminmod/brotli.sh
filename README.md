@@ -24,7 +24,7 @@ Example running `brotli.sh` passing the directory path on command line `/usr/loc
     chown nginx:nginx /usr/local/nginx/html/brotlitest2/bootstrap.min.css.br
     chmod 644 /usr/local/nginx/html/brotlitest2/bootstrap.min.css.br
 
-If `GZIP=y` variable enabled, you also can use `gzip` or `pigz` to create compressed gzip static versions of css and js files along with brotli ones. If only 1 cpu thread is detected, `brotli.sh` will fall back to gzip binary. If more than 2 cpu threads detected, then use pigz multi-threaded gzip binary.
+If `GZIP=y` variable enabled, you also can use `gzip` or `pigz` to create compressed gzip static versions of css and js files along with brotli ones. If only 1 cpu thread is detected, `brotli.sh` will fall back to gzip binary. If more than 2 cpu threads detected, then use pigz multi-threaded gzip binary. If pigz is used, compression level 11 is used to enable [Zopfli](https://github.com/google/zopfli) based compression for gzip fore more compressed files than what gzip level 9 compression can produce.
 
     ./brotli.sh /usr/local/nginx/html/brotlitest2
     /usr/local/bin/bro --force --input /usr/local/nginx/html/brotlitest2/bootstrap.min.js --output /usr/local/nginx/html/brotlitest2/bootstrap.min.js.br
