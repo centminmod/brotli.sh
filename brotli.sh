@@ -11,7 +11,7 @@ DT=`date +"%d%m%y-%H%M%S"`
 USER=nginx
 GROUP=nginx
 CHMOD=644
-DBEUG=n
+DBEUG=y
 
 # Brotli settings
 BROTLI_LEVEL=11
@@ -43,6 +43,8 @@ if [ ! -f /usr/local/bin/bro ]; then
     ls -lah /usr/local/src/brotli/bin/bro
   fi
   \cp -af bin/bro /usr/local/bin/bro
+  BROTLI_BIN='/usr/local/bin/bro'
+  BROTLI_BINOPT="--quality $BROTLI_LEVEL --force"
 elif [ -f /usr/local/bin/bro ]; then
   BROTLI_BIN='/usr/local/bin/bro'
   BROTLI_BINOPT="--quality $BROTLI_LEVEL --force"
