@@ -11,6 +11,7 @@ brotli.sh
     
     /root/tools/brotli.sh /path/to/parent/directory
     /root/tools/brotli.sh /path/to/parent/directory clean
+    /root/tools/brotli.sh /path/to/parent/directory display
 
 First time you run `brotli.sh` tool, it will detect if Brotli binary is located at `/usr/local/bin/bro` and if pigz binary is located at `/usr/bin/pigz`. If they are not detected, `brotli.sh` tool will install Brotli binary from official source compile available from [Google's Brotli Github repo](https://github.com/google/brotli) and install pigz from YUM repo if available.
 
@@ -74,6 +75,24 @@ Example `clean` appended flag with `GZIP=y` flag enabled
     
     cleaned up brotli *.br static css & js files
     recursively under /usr/local/nginx/html/brotlitest2
+
+Added `display` flag you can append on the end to just find and display all `*.br` and `*.gz` compressed css and js files.
+
+    ./brotli.sh /usr/local/nginx/html/brotlitest2 display
+    
+    Listing all *.br and *.gz css and js files
+    
+    /usr/local/nginx/html/brotlitest2/cm-jquerymin-pagespeed.js.br
+    /usr/local/nginx/html/brotlitest2/cm-pagespeed.css.gz
+    /usr/local/nginx/html/brotlitest2/bootstrap min.css.br
+    /usr/local/nginx/html/brotlitest2/cm-jquerymin-pagespeed.js.gz
+    /usr/local/nginx/html/brotlitest2/bootstrap.min.css.br
+    /usr/local/nginx/html/brotlitest2/cm-pagespeed.css.br
+    /usr/local/nginx/html/brotlitest2/bootstrap.min.js.gz
+    /usr/local/nginx/html/brotlitest2/bootstrap min.css.gz
+    /usr/local/nginx/html/brotlitest2/bootstrap.min.css.gz
+    /usr/local/nginx/html/brotlitest2/bootstrap.min.js.br
+
 
 Centmin Mod Nginx + ngx_brotli dynamic module enable
 ===============

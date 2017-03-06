@@ -81,6 +81,19 @@ else
   GZIP_BINOPT="-${GZIP_LEVEL}k -f"
 fi
 
+display_files() {
+  DISPLAY=$1
+  if [[ "$DISPLAY" = 'display' ]]; then
+    echo
+    echo "Listing all *.br and *.gz css and js files"
+    echo
+    /usr/bin/find $DIR_PATH -type f \( -iname '*.js.br' -o -iname '*.js.gz' -o -iname '*.css.br' -o -iname '*.css.gz' \) -print0 | while read -d $'\0' f;
+    do
+      echo "$f"
+    done
+  fi
+}
+
 brotli_compress() {
   BROTLI_CLEAN=$1
   /usr/bin/find $DIR_PATH -type f -iname '*.js' -print0 | while read -d $'\0' f;
@@ -216,11 +229,16 @@ if [[ -z "$DIR_PATH" && -z "$CLEAN" ]] || [[ -z "$DIR_PATH" && ! -z "$CLEAN" ]];
   echo
   echo "$0 /path/to/parent/directory"
   echo "$0 /path/to/parent/directory clean"
+  echo "$0 /path/to/parent/directory display"
   echo
 elif [[ -d "$DIR_PATH" && ! -z "$DIR_PATH" && "$CLEAN" = 'clean' ]]; then
   {
   brotli_compress clean
-  } 2>&1 | tee ${LOGDIR}/brotli.sh_${DT}.log
+  } 2>&1 | tee ${LOGDIR}/brotli.sh_clean_${DT}.log
+elif [[ -d "$DIR_PATH" && ! -z "$DIR_PATH" && "$CLEAN" = 'display' ]]; then
+  {
+  display_files display
+  } 2>&1 | tee ${LOGDIR}/brotli.sh_display_${DT}.log
 else
   {
   brotli_compress
