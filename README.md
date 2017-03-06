@@ -105,7 +105,7 @@ Contents of `/usr/local/nginx/conf/brotli_inc.conf` with ngx_brotli settings
 
 With Centmin Mod Nginx's Brotli module enabled, this will configure both Brotli on the fly compression as well as support Brotli static file serving if a `*.br` extension file is detected. To test, you can use `curl` command with appropate Accept-Encoding directives for `gzip` and `br`.
 
-Curl content encoding `gzip,br` check for Centmin Mod Nginx based server with ngx_brotli enabled
+Curl content encoding `gzip,br` check for Centmin Mod Nginx based server with ngx_brotli enabled. Check for `Content-Encoding: br` to confirm that Nginx is serving Brotli compressed version of the css or js file.
 
     curl -sI /dev/null -H"Accept-Encoding: gzip,br" localhost/brotlitest2/bootstrap.min.css
     HTTP/1.1 200 OK
@@ -124,7 +124,7 @@ Curl content encoding `gzip,br` check for Centmin Mod Nginx based server with ng
     Access-Control-Allow-Origin: *
     Cache-Control: public, must-revalidate, proxy-revalidate
 
-Curl content encoding `gzip` check for Centmin Mod Nginx based server with ngx_brotli enabled
+Curl content encoding `gzip` check for Centmin Mod Nginx based server with ngx_brotli enabled. Check for `Content-Encoding: gzip` to confirm that Nginx is serving Gzip compressed version of the css or js file.
 
     curl -sI /dev/null -H"Accept-Encoding: gzip" localhost/brotlitest2/bootstrap.min.css   
     HTTP/1.1 200 OK
