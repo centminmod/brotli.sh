@@ -78,7 +78,32 @@ To properly utilise Brotli compression and this `brolti.sh` tool, your web serve
     NGXDYNAMIC_BROTLI='y'
     NGINX_LIBBROTLI='y'
 
-Once variables set, you recompile Centmin Mod Nginx via `centmin.sh menu option 4` and will have [ngx_brotli](https://github.com/google/ngx_brotli) support enabled. This will configure both Brotli on the fly compression as well as support Brotli static file serving if a `*.br` extension file is detected. To test, you can use `curl` command with appropate Accept-Encoding directives for `gzip` and `br`.
+Once variables set, you recompile Centmin Mod Nginx via `centmin.sh menu option 4` and will have [ngx_brotli](https://github.com/google/ngx_brotli) support enabled. Centmin Mod Nginx dynamic modules are loaded from `/usr/local/nginx/modules` directory via an include file `/usr/local/nginx/conf/dynamic-modules.conf` in `/usr/local/nginx/conf/nginx.conf`.
+
+In `/usr/local/nginx/conf/nginx.conf` contains include file to load Nginx dynamic modules
+
+    include /usr/local/nginx/conf/dynamic-modules.conf;
+
+And also contains an include file with actual Nginx Brotli settings
+
+    include /usr/local/nginx/conf/brotli_inc.conf;
+
+Contents of `/usr/local/nginx/conf/dynamic-modules.conf` will contain Nginx Brotli's dynamic and static modules
+
+    load_module "modules/ngx_http_brotli_filter_module.so";
+    load_module "modules/ngx_http_brotli_static_module.so";
+
+Contents of `/usr/local/nginx/conf/brotli_inc.conf` with ngx_brotli settings
+
+    /usr/local/nginx/conf/brotli_inc.conf
+    brotli on;
+    brotli_static on;
+    brotli_min_length 1000;
+    brotli_buffers 32 8k;
+    brotli_comp_level 5;
+    brotli_types text/plain text/css text/xml application/javascript application/x-javascript application/xml application/xml+rss application/ecmascript application/json image/svg+xml;
+
+With Centmin Mod Nginx's Brotli module enabled, this will configure both Brotli on the fly compression as well as support Brotli static file serving if a `*.br` extension file is detected. To test, you can use `curl` command with appropate Accept-Encoding directives for `gzip` and `br`.
 
 Curl content encoding `gzip,br` check for Centmin Mod Nginx based server with ngx_brotli enabled
 
