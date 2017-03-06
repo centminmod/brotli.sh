@@ -70,6 +70,16 @@ Example `clean` appended flag with `GZIP=y` flag enabled
     cleaned up brotli *.br static css & js files
     recursively under /usr/local/nginx/html/brotlitest2
 
+Centmin Mod Nginx + ngx_brotli dynamic module enable
+===============
+
+To properly utilise Brotli compression and this `brolti.sh` tool, your web server needs to be able to serve Brotli Content-Encoding headers to only web browsers that support it. For Nginx there is an [ngx_brotli](https://github.com/google/ngx_brotli) module which can be compiled into Nginx to support such. Centmin Mod latest 123.09beta01 branch's Nginx server has built in support for [ngx_brotli](https://github.com/google/ngx_brotli) module that can optionally be enabled or disabled via persistent config file `/etc/centminmod/custom_config.inc` set variables below
+
+    NGXDYNAMIC_BROTLI='y'
+    NGINX_LIBBROTLI='y'
+
+Once variables set, you recompile Centmin Mod Nginx via `centmin.sh menu option 4` and will have [ngx_brotli](https://github.com/google/ngx_brotli) support enabled. This will configure both Brotli on the fly compression as well as support Brotli static file serving if a `*.br` extension file is detected. To test, you can use `curl` command with appropate Accept-Encoding directives for `gzip` and `br`.
+
 Curl content encoding `gzip,br` check for Centmin Mod Nginx based server with ngx_brotli enabled
 
     curl -sI /dev/null -H"Accept-Encoding: gzip,br" localhost/brotlitest2/bootstrap.min.css
