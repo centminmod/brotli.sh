@@ -202,8 +202,13 @@ Variables
     -rw-r--r--   1 root root  574 Mar  5 14:01 brotli.sh_050317-140151.log
     -rw-r--r--   1 root root  222 Mar  5 14:03 brotli.sh_050317-140341.log
 
-Other variables you can override n separate config file `brotli-config.ini` located in same directory as `brotli.sh` include the user and group file permissions of the resulting brotli *.br compressed files:
+Other variables you can override in separate config file `brotli-config.ini` located in same directory as `brotli.sh` include the user and group file permissions of the resulting brotli *.br compressed files:
 
     USER=nginx
     GROUP=nginx
     CHMOD=644
+    DBEUG=n
+    BROTLI_LEVEL=11
+    GZIP=y
+    GZIP_LEVEL=11
+    LOGDIR='/var/log/brotli'
