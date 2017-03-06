@@ -2,7 +2,7 @@ brotli.sh
 ===============
 
 
-`brotli.sh` tool to auto compress css and js files by specifying path on CentOS based Centmin Mod LEMP web stack servers. Appending clean flag on end of directory path will remove any `*.br` or `*.gz` compressed files
+`brotli.sh` tool to auto compress css and js files by specifying path on CentOS based Centmin Mod LEMP web stack servers. Appending clean flag on end of directory path will remove any `*.br` or `*.gz` compressed files. I usually place my tools at `/root/tools` but you can place `brotli.sh` whereever you want.
 
     Usage
     
@@ -11,7 +11,7 @@ brotli.sh
 
 Default is non-debug mode without any verbose output. You can set `DEBUG=y` in separate config file `brotli-config.ini` located in same directory as `brotli.sh` which will enable debug mode for more verbose output.
 
-Example:
+Example running `brotli.sh` passing the directory path on command line `/usr/local/nginx/html/brotlitest2`:
 
     ./brotli.sh /usr/local/nginx/html/brotlitest2
     /usr/local/bin/bro --force --input /usr/local/nginx/html/brotlitest2/bootstrap.min.js --output /usr/local/nginx/html/brotlitest2/bootstrap.min.js.br
@@ -50,7 +50,7 @@ Resulting files
     -rw-r--r--  1 nginx nginx 8.6K Jul 25  2016 bootstrap.min.js.br
     -rw-r--r--  1 nginx nginx 9.3K Jul 25  2016 bootstrap.min.js.gz
 
-Example `clean` appended flag
+Example `clean` appended flag running `brotli.sh` passing the directory path on command line `/usr/local/nginx/html/brotlitest2` withn `clean` appended
 
     ./brotli.sh /usr/local/nginx/html/brotlitest2 clean
     rm -rf /usr/local/nginx/html/brotlitest2/bootstrap.min.js.br
