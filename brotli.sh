@@ -6,13 +6,19 @@
 ######################################################
 # variables
 #############
-VERSION='0.1'
+VERSION='0.2'
 DT=`date +"%d%m%y-%H%M%S"`
+
+# file extension type array
+# space separated list of file extensions to compress each
+# using wildcard wrapped in double quotes
+FILETYPES=( "*.css" "*.js" )
 
 USER=nginx
 GROUP=nginx
 CHMOD=644
 DBEUG=y
+TIMEDSTATS=n
 
 # Brotli settings
 BROTLI_LEVEL=11
@@ -107,121 +113,86 @@ display_files() {
 
 brotli_compress() {
   BROTLI_CLEAN=$1
-  /usr/bin/find $DIR_PATH -type f -iname '*.js' -print0 | while read -d $'\0' f;
-  do
-    if [[ "$BROTLI_CLEAN" != 'clean' ]]; then
-      if [[ "$DEBUG" = [yY] ]]; then
-        echo "$BROTLI_BIN $BROTLI_BINOPT --input ${f} --output ${f}.br"
-        echo "chown ${USER}:${GROUP} ${f}.br"
-        echo "chmod $CHMOD ${f}.br"
-      fi
-      if [ -f "${f}" ]; then
+  for filematch in "${FILETYPES[@]}"
+   do
+    ##
+    /usr/bin/find $DIR_PATH -type f -iname "$filematch" -print0 | while read -d $'\0' f;
+    do
+      DETECT_EXT="${f##*.}"
+      if [[ "$BROTLI_CLEAN" != 'clean' ]]; then
         if [[ "$DEBUG" = [yY] ]]; then
-          /usr/bin/time --format='real: %es user: %Us sys: %Ss cpu: %P maxmem: %M KB cswaits: %w' $BROTLI_BIN $BROTLI_BINOPT --input "${f}" --output "${f}.br"
-        else
-          $BROTLI_BIN $BROTLI_BINOPT --input "${f}" --output "${f}.br"
+          BROTLI_BINSHORT=$(echo $BROTLI_BIN | sed -e 's|\/usr\/local\/bin\/||')
+          echo -n "[br compress $DETECT_EXT]: "
+          echo "$BROTLI_BINSHORT $BROTLI_BINOPT --input ${f} --output ${f}.br"
+          # echo "chown ${USER}:${GROUP} ${f}.br"
+          # echo "chmod $CHMOD ${f}.br"
         fi
-        chown ${USER}:${GROUP} "${f}.br"
-        chmod $CHMOD "${f}.br"
-        if [[ "$GZIP" = [Yy] ]]; then
-          if [[ "$GZIP_PIGZ" = [Yy] ]]; then
-            if [[ "$DEBUG" = [yY] ]]; then
-              echo "$GZIP_BIN $GZIP_BINOPT "${f}""
-            fi
-            if [[ "$DEBUG" = [yY] ]]; then
-              /usr/bin/time --format='real: %es user: %Us sys: %Ss cpu: %P maxmem: %M KB cswaits: %w' $GZIP_BIN $GZIP_BINOPT "${f}"
+        if [ -f "${f}" ]; then
+          if [[ "$DEBUG" = [yY] ]]; then
+            if [[ "$TIMEDSTATS" = [Yy] ]]; then
+              echo -n "[br compress stats]: "
+              /usr/bin/time --format='real: %es user: %Us sys: %Ss cpu: %P maxmem: %M KB cswaits: %w' $BROTLI_BIN $BROTLI_BINOPT --input "${f}" --output "${f}.br"
             else
-              $GZIP_BIN $GZIP_BINOPT "${f}"
+              $BROTLI_BIN $BROTLI_BINOPT --input "${f}" --output "${f}.br"
             fi
           else
-            if [[ "$DEBUG" = [yY] ]]; then
-              /usr/bin/time --format='real: %es user: %Us sys: %Ss cpu: %P maxmem: %M KB cswaits: %w' $GZIP_BIN $GZIP_BINOPT -c  -- "${f}" > "${f}.gz"
+            echo "[br compress]: ${f}"
+            $BROTLI_BIN $BROTLI_BINOPT --input "${f}" --output "${f}.br"
+          fi
+          chown ${USER}:${GROUP} "${f}.br"
+          chmod $CHMOD "${f}.br"
+          if [[ "$GZIP" = [Yy] ]]; then
+            if [[ "$GZIP_PIGZ" = [Yy] ]]; then
+              if [[ "$DEBUG" = [yY] ]]; then
+                GZIP_BINSHORT=$(echo $GZIP_BIN | sed -e 's|\/usr\/bin\/||')
+                echo -n "[gz compress $DETECT_EXT]: "
+                echo "$GZIP_BINSHORT $GZIP_BINOPT "${f}""
+              fi
+              if [[ "$DEBUG" = [yY] ]]; then
+                if [[ "$TIMEDSTATS" = [Yy] ]]; then
+                  echo -n "[gz compress stats]: "
+                  /usr/bin/time --format='real: %es user: %Us sys: %Ss cpu: %P maxmem: %M KB cswaits: %w' $GZIP_BIN $GZIP_BINOPT "${f}"
+                else
+                  $GZIP_BIN $GZIP_BINOPT "${f}"
+                fi
+              else
+                echo "[gz compress]: ${f}"
+                $GZIP_BIN $GZIP_BINOPT "${f}"
+              fi
             else
-              $GZIP_BIN $GZIP_BINOPT -c  -- "${f}" > "${f}.gz"
+              if [[ "$DEBUG" = [yY] ]]; then
+                /usr/bin/time --format='real: %es user: %Us sys: %Ss cpu: %P maxmem: %M KB cswaits: %w' $GZIP_BIN $GZIP_BINOPT -c  -- "${f}" > "${f}.gz"
+              else
+                $GZIP_BIN $GZIP_BINOPT -c  -- "${f}" > "${f}.gz"
+              fi
+            fi
+            # if [[ "$DEBUG" = [yY] ]]; then
+              # echo "chown ${USER}:${GROUP} "${f}.gz""
+              # echo "chmod $CHMOD "${f}.gz""
+            # fi
+            chown ${USER}:${GROUP} "${f}.gz"
+            chmod $CHMOD "${f}.gz"
+          fi
+        fi
+      fi
+      if [[ "$BROTLI_CLEAN" = 'clean' ]]; then
+        if [ -f "${f}.br" ]; then
+          if [[ "$DEBUG" = [yY] ]]; then
+            echo "rm -rf ${f}.br"
+            if [[ "$GZIP" = [Yy] ]]; then
+              echo "rm -rf "${f}.gz""
             fi
           fi
-          if [[ "$DEBUG" = [yY] ]]; then
-            echo "chown ${USER}:${GROUP} "${f}.gz""
-            echo "chmod $CHMOD "${f}.gz""
-          fi
-          chown ${USER}:${GROUP} "${f}.gz"
-          chmod $CHMOD "${f}.gz"
-        fi
-      fi
-    fi
-    if [[ "$BROTLI_CLEAN" = 'clean' ]]; then
-      if [ -f "${f}.br" ]; then
-        if [[ "$DEBUG" = [yY] ]]; then
-          echo "rm -rf ${f}.br"
+          rm -rf "${f}.br"
           if [[ "$GZIP" = [Yy] ]]; then
-            echo "rm -rf "${f}.gz""
+            rm -rf "${f}.gz"
           fi
         fi
-        rm -rf "${f}.br"
-        if [[ "$GZIP" = [Yy] ]]; then
-          rm -rf "${f}.gz"
-        fi
       fi
-    fi
+    done
+    ##
   done
   
-  /usr/bin/find $DIR_PATH -type f -iname '*.css' -print0 | while read -d $'\0' f;
-  do
-    if [[ "$BROTLI_CLEAN" != 'clean' ]]; then
-      if [[ "$DEBUG" = [yY] ]]; then
-        echo "$BROTLI_BIN $BROTLI_BINOPT --input ${f} --output ${f}.br"
-        echo "chown ${USER}:${GROUP} ${f}.br"
-        echo "chmod $CHMOD ${f}.br"
-      fi
-      if [ -f "${f}" ]; then
-        if [[ "$DEBUG" = [yY] ]]; then
-          /usr/bin/time --format='real: %es user: %Us sys: %Ss cpu: %P maxmem: %M KB cswaits: %w' $BROTLI_BIN $BROTLI_BINOPT --input "${f}" --output "${f}.br"
-        else
-          $BROTLI_BIN $BROTLI_BINOPT --input "${f}" --output "${f}.br"
-        fi
-        chown ${USER}:${GROUP} "${f}.br"
-        chmod $CHMOD "${f}.br"
-        if [[ "$GZIP" = [Yy] ]]; then
-          if [[ "$GZIP_PIGZ" = [Yy] ]]; then
-            if [[ "$DEBUG" = [yY] ]]; then
-              echo "$GZIP_BIN $GZIP_BINOPT "${f}""
-            fi
-            if [[ "$DEBUG" = [yY] ]]; then
-              /usr/bin/time --format='real: %es user: %Us sys: %Ss cpu: %P maxmem: %M KB cswaits: %w' $GZIP_BIN $GZIP_BINOPT "${f}"
-            else
-              $GZIP_BIN $GZIP_BINOPT "${f}"
-            fi
-          else
-            if [[ "$DEBUG" = [yY] ]]; then
-              /usr/bin/time --format='real: %es user: %Us sys: %Ss cpu: %P maxmem: %M KB cswaits: %w' $GZIP_BIN $GZIP_BINOPT -c  -- "${f}" > "${f}.gz"
-            else
-              $GZIP_BIN $GZIP_BINOPT -c  -- "${f}" > "${f}.gz"
-            fi
-          fi
-          if [[ "$DEBUG" = [yY] ]]; then
-            echo "chown ${USER}:${GROUP} "${f}.gz""
-            echo "chmod $CHMOD "${f}.gz""
-          fi
-          chown ${USER}:${GROUP} "${f}.gz"
-          chmod $CHMOD "${f}.gz"
-        fi
-      fi
-    fi
-    if [[ "$BROTLI_CLEAN" = 'clean' ]]; then
-      if [ -f "${f}.br" ]; then
-        if [[ "$DEBUG" = [yY] ]]; then
-          echo "rm -rf ${f}.br"
-          if [[ "$GZIP" = [Yy] ]]; then
-            echo "rm -rf "${f}.gz""
-          fi
-        fi
-        rm -rf "${f}.br"
-        if [[ "$GZIP" = [Yy] ]]; then
-          rm -rf "${f}.gz"
-        fi
-      fi
-    fi
-  done
   if [[ "$BROTLI_CLEAN" = 'clean' ]]; then
     echo
     echo "cleaned up brotli *.br & *.gz static css & js files"
