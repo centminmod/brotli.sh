@@ -82,6 +82,38 @@ To properly utilise Brotli compression and this `brolti.sh` tool, your web serve
 
 Once variables set, you recompile Centmin Mod Nginx via `centmin.sh menu option 4` and will have [ngx_brotli](https://github.com/google/ngx_brotli) support enabled. Centmin Mod Nginx dynamic modules are loaded from `/usr/local/nginx/modules` directory via an include file `/usr/local/nginx/conf/dynamic-modules.conf` in `/usr/local/nginx/conf/nginx.conf`.
 
+`centmin.sh menu option 4`
+
+    --------------------------------------------------------
+         Centmin Mod Menu 123.09beta01 centminmod.com     
+    --------------------------------------------------------
+    1).  Centmin Install
+    2).  Add Nginx vhost domain
+    3).  NSD setup domain name DNS
+    4).  Nginx Upgrade / Downgrade
+    5).  PHP Upgrade / Downgrade
+    6).  XCache Re-install
+    7).  APC Cache Re-install
+    8).  XCache Install
+    9).  APC Cache Install
+    10). Memcached Server Re-install
+    11). MariaDB MySQL Upgrade & Management
+    12). Zend OpCache Install/Re-install
+    13). Install/Reinstall Redis PHP Extension
+    14). SELinux disable
+    15). Install/Reinstall ImagicK PHP Extension
+    16). Change SSHD Port Number
+    17). Multi-thread compression: pigz,pbzip2,lbzip2...
+    18). Suhosin PHP Extension install
+    19). Install FFMPEG and FFMPEG PHP Extension
+    20). NSD Install/Re-Install
+    21). Update - Nginx + PHP-FPM + Siege
+    22). Add Wordpress Nginx vhost + Cache Plugin
+    23). Update Centmin Mod Code Base
+    24). Exit
+    --------------------------------------------------------
+    Enter option [ 1 - 24 ] 
+
 In `/usr/local/nginx/conf/nginx.conf` contains include file to load Nginx dynamic modules
 
     include /usr/local/nginx/conf/dynamic-modules.conf;
@@ -109,7 +141,7 @@ With Centmin Mod Nginx's Brotli module enabled, this will configure both Brotli 
 
 Curl content encoding `gzip,br` check for Centmin Mod Nginx based server with ngx_brotli enabled. Check for `Content-Encoding: br` to confirm that Nginx is serving Brotli compressed version of the css or js file.
 
-    curl -sI /dev/null -H"Accept-Encoding: gzip,br" localhost/brotlitest2/bootstrap.min.css
+    curl -sI /dev/null -H"Accept-Encoding: gzip,br" https://domain.com/brotlitest2/bootstrap.min.css
     HTTP/1.1 200 OK
     Date: Sun, 05 Mar 2017 16:39:04 GMT
     Content-Type: text/css
@@ -128,7 +160,7 @@ Curl content encoding `gzip,br` check for Centmin Mod Nginx based server with ng
 
 Curl content encoding `gzip` check for Centmin Mod Nginx based server with ngx_brotli enabled. Check for `Content-Encoding: gzip` to confirm that Nginx is serving Gzip compressed version of the css or js file.
 
-    curl -sI /dev/null -H"Accept-Encoding: gzip" localhost/brotlitest2/bootstrap.min.css   
+    curl -sI /dev/null -H"Accept-Encoding: gzip" https://domain.com/brotlitest2/bootstrap.min.css   
     HTTP/1.1 200 OK
     Date: Sun, 05 Mar 2017 16:40:19 GMT
     Content-Type: text/css
