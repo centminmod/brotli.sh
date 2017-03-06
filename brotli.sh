@@ -81,7 +81,7 @@ fi
 
 brotli_compress() {
   BROTLI_CLEAN=$1
-  for f in $(/usr/bin/find $DIR_PATH -type f -iname '*.js')
+  /usr/bin/find $DIR_PATH -type f -iname '*.js' -print0 | while read -d $'\0' f;
   do
     if [[ "$BROTLI_CLEAN" != 'clean' ]]; then
       if [[ "$DEBUG" = [yY] ]]; then
@@ -139,7 +139,7 @@ brotli_compress() {
     fi
   done
   
-  for f in $(/usr/bin/find $DIR_PATH -type f -iname '*.css')
+  /usr/bin/find $DIR_PATH -type f -iname '*.css' -print0 | while read -d $'\0' f;
   do
     if [[ "$BROTLI_CLEAN" != 'clean' ]]; then
       if [[ "$DEBUG" = [yY] ]]; then
