@@ -28,6 +28,11 @@ CPUS=$(grep -c "processor" /proc/cpuinfo)
 SCRIPT_DIR=$(readlink -f $(dirname ${BASH_SOURCE[0]}))
 
 if [ ! -f /usr/local/bin/bro ]; then
+  echo
+  echo "/usr/local/bin/bro not found"
+  echo "installing brotli binary"
+  echo
+  sleep 3
   if [ -d /svr-setup ]; then
     cd /svr-setup
   else
@@ -51,6 +56,11 @@ elif [ -f /usr/local/bin/bro ]; then
 fi
 
 if [ ! -f /usr/bin/pigz ]; then
+  echo
+  echo "/usr/bin/pigz not found"
+  echo "installing pigz from YUM repo"
+  echo
+  sleep 3
     yum -q -y install pigz
     if [ ! -f /usr/bin/pigz ]; then
       echo "/usr/bin/pigz still not found"
