@@ -1,6 +1,8 @@
 brotli.sh
 ===============
 
+Short Url: [centminmod.com/brotlistatic](https://centminmod.com/brotlistatic)
+
 
 `brotli.sh` tool to auto compress css and js files by specifying path on CentOS based Centmin Mod LEMP web stack servers. Appending clean flag on end of directory path will remove any `*.br` or `*.gz` compressed files. I usually place my tools at `/root/tools` but you can place `brotli.sh` whereever you want.
 
