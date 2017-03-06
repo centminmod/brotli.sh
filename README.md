@@ -73,7 +73,7 @@ Example `clean` appended flag with `GZIP=y` flag enabled
 Centmin Mod Nginx + ngx_brotli dynamic module enable
 ===============
 
-To properly utilise Brotli compression and this `brolti.sh` tool, your web server needs to be able to serve Brotli Content-Encoding headers to only web browsers that support it. For Nginx there is an [ngx_brotli](https://github.com/google/ngx_brotli) module which can be compiled into Nginx to support such. Centmin Mod latest 123.09beta01 branch's Nginx server has built in support for [ngx_brotli](https://github.com/google/ngx_brotli) module that can optionally be enabled or disabled via persistent config file `/etc/centminmod/custom_config.inc` set variables below
+To properly utilise Brotli compression and this `brolti.sh` tool, your web server needs to be able to serve Brotli Content-Encoding headers to only web browsers that support it. For Nginx there is an [ngx_brotli](https://github.com/google/ngx_brotli) module which can be compiled into Nginx to support such. Centmin Mod [latest 123.09beta01 branch's Nginx server](https://centminmod.com/install.html) has built in support for [ngx_brotli](https://github.com/google/ngx_brotli) module that can optionally be enabled or disabled via persistent config file `/etc/centminmod/custom_config.inc` set variables below:
 
     NGXDYNAMIC_BROTLI='y'
     NGINX_LIBBROTLI='y'
