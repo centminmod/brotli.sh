@@ -6,13 +6,14 @@
 ######################################################
 # variables
 #############
-VERSION='0.2'
+VERSION='0.3'
 DT=`date +"%d%m%y-%H%M%S"`
 
 # file extension type array
 # space separated list of file extensions to compress each
 # using wildcard wrapped in double quotes
 FILETYPES=( "*.css" "*.js" )
+FILE_MINSIZE='1048576'
 
 USER=nginx
 GROUP=nginx
@@ -119,10 +120,11 @@ brotli_compress() {
     /usr/bin/find $DIR_PATH -type f -iname "$filematch" -print0 | while read -d $'\0' f;
     do
       DETECT_EXT="${f##*.}"
-      if [[ "$BROTLI_CLEAN" != 'clean' ]]; then
+      FILESIZE=$(stat -c%s "$f")
+      if [[ "$BROTLI_CLEAN" != 'clean' ]] && [[ "$FILESIZE" -le "$FILE_MINSIZE" ]]; then
         if [[ "$DEBUG" = [yY] ]]; then
           BROTLI_BINSHORT=$(echo $BROTLI_BIN | sed -e 's|\/usr\/local\/bin\/||')
-          echo -n "[br compress $DETECT_EXT]: "
+          echo -n "[br compress $DETECT_EXT $FILESIZE bytes]: "
           echo "$BROTLI_BINSHORT $BROTLI_BINOPT --input ${f} --output ${f}.br"
           # echo "chown ${USER}:${GROUP} ${f}.br"
           # echo "chmod $CHMOD ${f}.br"
@@ -141,11 +143,16 @@ brotli_compress() {
           fi
           chown ${USER}:${GROUP} "${f}.br"
           chmod $CHMOD "${f}.br"
+          BRCOMP_FILESIZE=$(stat -c%s "${f}.br")
+          if [[ "$DEBUG" = [yY] ]]; then
+            BRCOMP_RATIO=$(echo "scale=2; $FILESIZE/$BRCOMP_FILESIZE" | bc)
+            echo "[br compression ratio]: $BRCOMP_RATIO"
+          fi
           if [[ "$GZIP" = [Yy] ]]; then
             if [[ "$GZIP_PIGZ" = [Yy] ]]; then
               if [[ "$DEBUG" = [yY] ]]; then
                 GZIP_BINSHORT=$(echo $GZIP_BIN | sed -e 's|\/usr\/bin\/||')
-                echo -n "[gz compress $DETECT_EXT]: "
+                echo -n "[gz compress $DETECT_EXT $FILESIZE bytes]: "
                 echo "$GZIP_BINSHORT $GZIP_BINOPT "${f}""
               fi
               if [[ "$DEBUG" = [yY] ]]; then
@@ -172,6 +179,11 @@ brotli_compress() {
             # fi
             chown ${USER}:${GROUP} "${f}.gz"
             chmod $CHMOD "${f}.gz"
+            GZCOMP_FILESIZE=$(stat -c%s "${f}.gz")
+            if [[ "$DEBUG" = [yY] ]]; then
+              GZCOMP_RATIO=$(echo "scale=2; $FILESIZE/$GZCOMP_FILESIZE" | bc)
+              echo "[gz compression ratio]: $GZCOMP_RATIO"
+            fi
           fi
         fi
       fi

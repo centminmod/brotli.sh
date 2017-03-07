@@ -20,58 +20,94 @@ brotli.sh Requirements
 
 * CentOS with YUM repo for pigz package or you can manually install pigz for your Linux distro before running `brotli.sh`
 * git for installing Google Brotli binary from their Github repo
+* bc package for file size and compression ratio calculations
 
 brotli.sh Info
 ===============
 
 First time you run `brotli.sh` tool, it will detect if Brotli binary is located at `/usr/local/bin/bro` and if pigz binary is located at `/usr/bin/pigz`. If they are not detected, `brotli.sh` tool will install Brotli binary from official source compile available from [Google's Brotli Github repo](https://github.com/google/brotli) and install pigz from YUM repo if available.
 
-Default is to enable debug mode with verbose output. You can set `DEBUG=y` or `DEBUG=n` in separate config file `brotli-config.ini` located in same directory as `brotli.sh` which will enable or disabledebug mode for more verbose output.
+Default is to enable debug mode with verbose output which includes compression ratio (original size/compressed size). You can set `DEBUG=y` or `DEBUG=n` in separate config file `brotli-config.ini` located in same directory as `brotli.sh` which will enable or disabledebug mode for more verbose output.
 
-Example running `brotli.sh` passing the directory path on command line `/usr/local/nginx/html/brotlitest2` and `GZIP=n` and `TIMEDSTATS=n`:
-
-    ./brotli.sh /usr/local/nginx/html/brotlitest2
-    [br compress css]: bro --quality 11 --force --input /usr/local/nginx/html/brotlitest2/bootstrap min.css --output /usr/local/nginx/html/brotlitest2/bootstrap min.css.br
-    [br compress css]: bro --quality 11 --force --input /usr/local/nginx/html/brotlitest2/bootstrap.min.css --output /usr/local/nginx/html/brotlitest2/bootstrap.min.css.br
-    [br compress js]: bro --quality 11 --force --input /usr/local/nginx/html/brotlitest2/bootstrap.min.js --output /usr/local/nginx/html/brotlitest2/bootstrap.min.js.br
-
-Example running `brotli.sh` passing the directory path on command line `/usr/local/nginx/html/brotlitest2` and `GZIP=n` and `TIMEDSTATS=y`:
+Example running `brotli.sh` passing the directory path on command line `/usr/local/nginx/html/brotlitest2` and `GZIP=n` and `TIMEDSTATS=n` and `DEBUG=n`:
 
     ./brotli.sh /usr/local/nginx/html/brotlitest2
-    [br compress css]: bro --quality 11 --force --input /usr/local/nginx/html/brotlitest2/bootstrap min.css --output /usr/local/nginx/html/brotlitest2/bootstrap min.css.br
-    [br compress stats]: real: 0.14s user: 0.14s sys: 0.00s cpu: 100% maxmem: 7540 KB cswaits: 2
-    [br compress css]: bro --quality 11 --force --input /usr/local/nginx/html/brotlitest2/bootstrap.min.css --output /usr/local/nginx/html/brotlitest2/bootstrap.min.css.br
-    [br compress stats]: real: 0.14s user: 0.14s sys: 0.00s cpu: 99% maxmem: 7536 KB cswaits: 1
-    [br compress js]: bro --quality 11 --force --input /usr/local/nginx/html/brotlitest2/bootstrap.min.js --output /usr/local/nginx/html/brotlitest2/bootstrap.min.js.br
+    [br compress]: /usr/local/nginx/html/brotlitest2/bootstrap min.css
+    [br compress]: /usr/local/nginx/html/brotlitest2/bootstrap.min.css
+    [br compress]: /usr/local/nginx/html/brotlitest2/bootstrap.min.js
+
+Example running `brotli.sh` passing the directory path on command line `/usr/local/nginx/html/brotlitest2` and `GZIP=n` and `TIMEDSTATS=n` and `DEBUG=y`:
+
+    ./brotli.sh /usr/local/nginx/html/brotlitest2
+    [br compress css 121200 bytes]: bro --quality 11 --force --input /usr/local/nginx/html/brotlitest2/bootstrap min.css --output /usr/local/nginx/html/brotlitest2/bootstrap min.css.br
+    [br compression ratio]: 7.50
+    [br compress css 121200 bytes]: bro --quality 11 --force --input /usr/local/nginx/html/brotlitest2/bootstrap.min.css --output /usr/local/nginx/html/brotlitest2/bootstrap.min.css.br
+    [br compression ratio]: 7.50
+    [br compress js 37045 bytes]: bro --quality 11 --force --input /usr/local/nginx/html/brotlitest2/bootstrap.min.js --output /usr/local/nginx/html/brotlitest2/bootstrap.min.js.br
+    [br compression ratio]: 4.24
+
+Example running `brotli.sh` passing the directory path on command line `/usr/local/nginx/html/brotlitest2` and `GZIP=n` and `TIMEDSTATS=y` and `DEBUG=y`:
+
+    ./brotli.sh /usr/local/nginx/html/brotlitest2
+    [br compress css 121200 bytes]: bro --quality 11 --force --input /usr/local/nginx/html/brotlitest2/bootstrap min.css --output /usr/local/nginx/html/brotlitest2/bootstrap min.css.br
+    [br compress stats]: real: 0.14s user: 0.13s sys: 0.00s cpu: 98% maxmem: 7540 KB cswaits: 2
+    [br compression ratio]: 7.50
+    [br compress css 121200 bytes]: bro --quality 11 --force --input /usr/local/nginx/html/brotlitest2/bootstrap.min.css --output /usr/local/nginx/html/brotlitest2/bootstrap.min.css.br
+    [br compress stats]: real: 0.14s user: 0.14s sys: 0.00s cpu: 99% maxmem: 7540 KB cswaits: 1
+    [br compression ratio]: 7.50
+    [br compress js 37045 bytes]: bro --quality 11 --force --input /usr/local/nginx/html/brotlitest2/bootstrap.min.js --output /usr/local/nginx/html/brotlitest2/bootstrap.min.js.br
     [br compress stats]: real: 0.04s user: 0.03s sys: 0.00s cpu: 97% maxmem: 3316 KB cswaits: 0
+    [br compression ratio]: 4.24
 
 If `GZIP=y` variable enabled, you also can use `gzip` or `pigz` to create compressed gzip static versions of css and js files along with brotli ones. If only 1 cpu thread is detected, `brotli.sh` will fall back to gzip binary. If more than 2 cpu threads detected, then use pigz multi-threaded gzip binary. If pigz is used, compression level 11 is used to enable [Zopfli](https://github.com/google/zopfli) based compression for gzip for more compressed files than what gzip level 9 compression can produce.
 
-With `GZIP=y` and `TIMEDSTATS=n`
+With `GZIP=y` and `TIMEDSTATS=n` and `DEBUG=n`
+
+    /brotli.sh /usr/local/nginx/html/brotlitest2
+    [br compress]: /usr/local/nginx/html/brotlitest2/bootstrap min.css
+    [gz compress]: /usr/local/nginx/html/brotlitest2/bootstrap min.css
+    [br compress]: /usr/local/nginx/html/brotlitest2/bootstrap.min.css
+    [gz compress]: /usr/local/nginx/html/brotlitest2/bootstrap.min.css
+    [br compress]: /usr/local/nginx/html/brotlitest2/bootstrap.min.js
+    [gz compress]: /usr/local/nginx/html/brotlitest2/bootstrap.min.js
+
+With `GZIP=y` and `TIMEDSTATS=n` and `DEBUG=y`
 
     ./brotli.sh /usr/local/nginx/html/brotlitest2
-    [br compress css]: bro --quality 11 --force --input /usr/local/nginx/html/brotlitest2/bootstrap min.css --output /usr/local/nginx/html/brotlitest2/bootstrap min.css.br
-    [gz compress css]: pigz -11k -f /usr/local/nginx/html/brotlitest2/bootstrap min.css
-    [br compress css]: bro --quality 11 --force --input /usr/local/nginx/html/brotlitest2/bootstrap.min.css --output /usr/local/nginx/html/brotlitest2/bootstrap.min.css.br
-    [gz compress css]: pigz -11k -f /usr/local/nginx/html/brotlitest2/bootstrap.min.css
-    [br compress js]: bro --quality 11 --force --input /usr/local/nginx/html/brotlitest2/bootstrap.min.js --output /usr/local/nginx/html/brotlitest2/bootstrap.min.js.br
-    [gz compress js]: pigz -11k -f /usr/local/nginx/html/brotlitest2/bootstrap.min.js
+    [br compress css 121200 bytes]: bro --quality 11 --force --input /usr/local/nginx/html/brotlitest2/bootstrap min.css --output /usr/local/nginx/html/brotlitest2/bootstrap min.css.br
+    [br compression ratio]: 7.50
+    [gz compress css 121200 bytes]: pigz -11k -f /usr/local/nginx/html/brotlitest2/bootstrap min.css
+    [gz compression ratio]: 6.61
+    [br compress css 121200 bytes]: bro --quality 11 --force --input /usr/local/nginx/html/brotlitest2/bootstrap.min.css --output /usr/local/nginx/html/brotlitest2/bootstrap.min.css.br
+    [br compression ratio]: 7.50
+    [gz compress css 121200 bytes]: pigz -11k -f /usr/local/nginx/html/brotlitest2/bootstrap.min.css
+    [gz compression ratio]: 6.61
+    [br compress js 37045 bytes]: bro --quality 11 --force --input /usr/local/nginx/html/brotlitest2/bootstrap.min.js --output /usr/local/nginx/html/brotlitest2/bootstrap.min.js.br
+    [br compression ratio]: 4.24
+    [gz compress js 37045 bytes]: pigz -11k -f /usr/local/nginx/html/brotlitest2/bootstrap.min.js
+    [gz compression ratio]: 3.90
 
-With `GZIP=y` and `TIMEDSTATS=y`
+With `GZIP=y` and `TIMEDSTATS=y` and `DEBUG=y`
 
     ./brotli.sh /usr/local/nginx/html/brotlitest2
-    [br compress css]: bro --quality 11 --force --input /usr/local/nginx/html/brotlitest2/bootstrap min.css --output /usr/local/nginx/html/brotlitest2/bootstrap min.css.br
-    [br compress stats]: real: 0.14s user: 0.14s sys: 0.00s cpu: 100% maxmem: 7540 KB cswaits: 2
-    [gz compress css]: pigz -11k -f /usr/local/nginx/html/brotlitest2/bootstrap min.css
-    [gz compress stats]: real: 0.41s user: 0.38s sys: 0.02s cpu: 99% maxmem: 5124 KB cswaits: 8
-    [br compress css]: bro --quality 11 --force --input /usr/local/nginx/html/brotlitest2/bootstrap.min.css --output /usr/local/nginx/html/brotlitest2/bootstrap.min.css.br
+    [br compress css 121200 bytes]: bro --quality 11 --force --input /usr/local/nginx/html/brotlitest2/bootstrap min.css --output /usr/local/nginx/html/brotlitest2/bootstrap min.css.br
     [br compress stats]: real: 0.14s user: 0.14s sys: 0.00s cpu: 99% maxmem: 7540 KB cswaits: 1
-    [gz compress css]: pigz -11k -f /usr/local/nginx/html/brotlitest2/bootstrap.min.css
-    [gz compress stats]: real: 0.41s user: 0.39s sys: 0.02s cpu: 99% maxmem: 5120 KB cswaits: 8
-    [br compress js]: bro --quality 11 --force --input /usr/local/nginx/html/brotlitest2/bootstrap.min.js --output /usr/local/nginx/html/brotlitest2/bootstrap.min.js.br
-    [br compress stats]: real: 0.04s user: 0.03s sys: 0.00s cpu: 100% maxmem: 3316 KB cswaits: 0
-    [gz compress js]: pigz -11k -f /usr/local/nginx/html/brotlitest2/bootstrap.min.js
-    [gz compress stats]: real: 0.09s user: 0.08s sys: 0.00s cpu: 98% maxmem: 3084 KB cswaits: 6
+    [br compression ratio]: 7.50
+    [gz compress css 121200 bytes]: pigz -11k -f /usr/local/nginx/html/brotlitest2/bootstrap min.css
+    [gz compress stats]: real: 0.41s user: 0.39s sys: 0.02s cpu: 100% maxmem: 5124 KB cswaits: 8
+    [gz compression ratio]: 6.61
+    [br compress css 121200 bytes]: bro --quality 11 --force --input /usr/local/nginx/html/brotlitest2/bootstrap.min.css --output /usr/local/nginx/html/brotlitest2/bootstrap.min.css.br
+    [br compress stats]: real: 0.14s user: 0.14s sys: 0.00s cpu: 99% maxmem: 7536 KB cswaits: 1
+    [br compression ratio]: 7.50
+    [gz compress css 121200 bytes]: pigz -11k -f /usr/local/nginx/html/brotlitest2/bootstrap.min.css
+    [gz compress stats]: real: 0.41s user: 0.38s sys: 0.02s cpu: 99% maxmem: 5124 KB cswaits: 8
+    [gz compression ratio]: 6.61
+    [br compress js 37045 bytes]: bro --quality 11 --force --input /usr/local/nginx/html/brotlitest2/bootstrap.min.js --output /usr/local/nginx/html/brotlitest2/bootstrap.min.js.br
+    [br compress stats]: real: 0.04s user: 0.03s sys: 0.00s cpu: 97% maxmem: 3316 KB cswaits: 0
+    [br compression ratio]: 4.24
+    [gz compress js 37045 bytes]: pigz -11k -f /usr/local/nginx/html/brotlitest2/bootstrap.min.js
+    [gz compress stats]: real: 0.09s user: 0.08s sys: 0.00s cpu: 100% maxmem: 3084 KB cswaits: 7
+    [gz compression ratio]: 3.90
 
 Resulting files
 
@@ -239,8 +275,12 @@ Centmin Mod Nginx with ngx_brotli enabled
 > configure arguments: --with-ld-opt='-ljemalloc -Wl,-z,relro -Wl,-rpath,/usr/local/lib' --with-cc-opt='-m64 -march=native -g -O3 -fstack-protector-strong -fuse-ld=gold --param=ssp-buffer-size=4 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wno-deprecated-declarations -gsplit-dwarf' --sbin-path=/usr/local/sbin/nginx --conf-path=/usr/local/nginx/conf/nginx.conf --with-http_stub_status_module --with-http_secure_link_module --add-module=../nginx-module-vts --with-libatomic --with-http_gzip_static_module --add-dynamic-module=../ngx_brotli --add-dynamic-module=../ngx_pagespeed-1.12.34.2-beta --with-http_sub_module --with-http_addition_module --with-http_image_filter_module=dynamic --with-http_geoip_module --with-stream_geoip_module --with-stream_realip_module --with-stream_ssl_preread_module --with-threads --with-stream=dynamic --with-stream_ssl_module --with-http_realip_module --add-dynamic-module=../ngx-fancyindex-0.4.0 --add-module=../ngx_cache_purge-2.3 --add-module=../ngx_devel_kit-0.3.0 --add-module=../set-misc-nginx-module-0.31 --add-module=../echo-nginx-module-0.60 --add-module=../redis2-nginx-module-0.13 --add-module=../ngx_http_redis-0.3.7 --add-module=../memc-nginx-module-0.17 --add-module=../srcache-nginx-module-0.31 --add-module=../headers-more-nginx-module-0.32 --with-pcre=../pcre-8.40 --with-pcre-jit --with-zlib=../zlib-1.2.11 --with-http_ssl_module --with-http_v2_module --with-openssl=../openssl-1.1.0e
 
 
-Variables
+Configuration Variables
 ===============
+
+`brotli.sh` can specify FILE_MINSIZE variable to define the minimum size of css or js file to be precompressed. Any files greater than FILE_MINSIZE will skip compression routines. Default is set to 1048576 bytes.
+
+    FILE_MINSIZE='1048576'
 
 `brotli.sh` runs are logged to directory defined by variable `LOGDIR='/var/log/brotli'`. You can override this path in separate config file `brotli-config.ini` located in same directory as `brotli.sh` by setting your own `LOGDIR` variable path
 
@@ -265,3 +305,4 @@ Other variables you can override in separate config file `brotli-config.ini` loc
     GZIP_LEVEL=11
     LOGDIR='/var/log/brotli'
     FILETYPES=( "*.css" "*.js" )
+    FILE_MINSIZE='1048576'
