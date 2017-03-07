@@ -148,12 +148,8 @@ Added `display` flag you can append on the end to just find and display all `*.b
     
     Listing all *.br and *.gz css and js files
     
-    /usr/local/nginx/html/brotlitest2/cm-jquerymin-pagespeed.js.br
-    /usr/local/nginx/html/brotlitest2/cm-pagespeed.css.gz
     /usr/local/nginx/html/brotlitest2/bootstrap min.css.br
-    /usr/local/nginx/html/brotlitest2/cm-jquerymin-pagespeed.js.gz
     /usr/local/nginx/html/brotlitest2/bootstrap.min.css.br
-    /usr/local/nginx/html/brotlitest2/cm-pagespeed.css.br
     /usr/local/nginx/html/brotlitest2/bootstrap.min.js.gz
     /usr/local/nginx/html/brotlitest2/bootstrap min.css.gz
     /usr/local/nginx/html/brotlitest2/bootstrap.min.css.gz
