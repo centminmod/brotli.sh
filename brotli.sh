@@ -55,7 +55,7 @@ if [ ! -f /usr/local/bin/brotli ]; then
   else
     ls -lah /usr/local/src/brotli/bin/brotli
   fi
-  \cp -af bin/bro /usr/local/bin/brotli
+  \cp -af bin/brotli /usr/local/bin/brotli
   BROTLI_BIN='/usr/local/bin/brotli'
   BROTLI_BINOPT="-q $BROTLI_LEVEL --force"
 elif [ -f /usr/local/bin/brotli ]; then
