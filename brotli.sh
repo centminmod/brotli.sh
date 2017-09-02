@@ -6,7 +6,7 @@
 ######################################################
 # variables
 #############
-VERSION='0.3'
+VERSION='0.4'
 DT=`date +"%d%m%y-%H%M%S"`
 
 # file extension type array
@@ -57,10 +57,10 @@ if [ ! -f /usr/local/bin/brotli ]; then
   fi
   \cp -af bin/bro /usr/local/bin/brotli
   BROTLI_BIN='/usr/local/bin/brotli'
-  BROTLI_BINOPT="--quality $BROTLI_LEVEL --force"
+  BROTLI_BINOPT="-q $BROTLI_LEVEL --force"
 elif [ -f /usr/local/bin/brotli ]; then
   BROTLI_BIN='/usr/local/bin/brotli'
-  BROTLI_BINOPT="--quality $BROTLI_LEVEL --force"
+  BROTLI_BINOPT="-q $BROTLI_LEVEL --force"
 fi
 
 if [ ! -f /usr/bin/pigz ]; then
@@ -133,13 +133,13 @@ brotli_compress() {
           if [[ "$DEBUG" = [yY] ]]; then
             if [[ "$TIMEDSTATS" = [Yy] ]]; then
               echo -n "[br compress stats]: "
-              /usr/bin/time --format='real: %es user: %Us sys: %Ss cpu: %P maxmem: %M KB cswaits: %w' $BROTLI_BIN $BROTLI_BINOPT --input "${f}" --output "${f}.br"
+              /usr/bin/time --format='real: %es user: %Us sys: %Ss cpu: %P maxmem: %M KB cswaits: %w' $BROTLI_BIN $BROTLI_BINOPT "${f}" --output="${f}.br"
             else
-              $BROTLI_BIN $BROTLI_BINOPT --input "${f}" --output "${f}.br"
+              $BROTLI_BIN $BROTLI_BINOPT "${f}" --output="${f}.br"
             fi
           else
             echo "[br compress]: ${f}"
-            $BROTLI_BIN $BROTLI_BINOPT --input "${f}" --output "${f}.br"
+            $BROTLI_BIN $BROTLI_BINOPT "${f}" --output="${f}.br"
           fi
           chown ${USER}:${GROUP} "${f}.br"
           chmod $CHMOD "${f}.br"
