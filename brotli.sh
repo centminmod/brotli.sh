@@ -35,9 +35,9 @@ CPUS=$(grep -c "processor" /proc/cpuinfo)
 #############
 SCRIPT_DIR=$(readlink -f $(dirname ${BASH_SOURCE[0]}))
 
-if [ ! -f /usr/local/bin/bro ]; then
+if [ ! -f /usr/local/bin/brotli ]; then
   echo
-  echo "/usr/local/bin/bro not found"
+  echo "/usr/local/bin/brotli not found"
   echo "installing brotli binary"
   echo
   sleep 3
@@ -51,15 +51,15 @@ if [ ! -f /usr/local/bin/bro ]; then
   python setup.py install
   make -j${CPUS}
   if [ -d /svr-setup ]; then
-    ls -lah /svr-setup/brotli/bin/bro
+    ls -lah /svr-setup/brotli/bin/brotli
   else
-    ls -lah /usr/local/src/brotli/bin/bro
+    ls -lah /usr/local/src/brotli/bin/brotli
   fi
-  \cp -af bin/bro /usr/local/bin/bro
-  BROTLI_BIN='/usr/local/bin/bro'
+  \cp -af bin/bro /usr/local/bin/brotli
+  BROTLI_BIN='/usr/local/bin/brotli'
   BROTLI_BINOPT="--quality $BROTLI_LEVEL --force"
-elif [ -f /usr/local/bin/bro ]; then
-  BROTLI_BIN='/usr/local/bin/bro'
+elif [ -f /usr/local/bin/brotli ]; then
+  BROTLI_BIN='/usr/local/bin/brotli'
   BROTLI_BINOPT="--quality $BROTLI_LEVEL --force"
 fi
 
