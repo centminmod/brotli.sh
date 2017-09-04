@@ -48,14 +48,15 @@ if [ ! -f /usr/local/bin/brotli ]; then
   fi
   git clone https://github.com/google/brotli.git
   cd brotli
-  python setup.py install
+  ./configure-cmake
   make -j${CPUS}
+  make install
   if [ -d /svr-setup ]; then
     ls -lah /svr-setup/brotli/bin/brotli
   else
     ls -lah /usr/local/src/brotli/bin/brotli
   fi
-  \cp -af bin/brotli /usr/local/bin/brotli
+  # \cp -af bin/brotli /usr/local/bin/brotli
   BROTLI_BIN='/usr/local/bin/brotli'
   BROTLI_BINOPT="-q $BROTLI_LEVEL --force"
 elif [ -f /usr/local/bin/brotli ]; then
