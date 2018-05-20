@@ -6,7 +6,7 @@
 ######################################################
 # variables
 #############
-VERSION='0.4'
+VERSION='0.5'
 DT=`date +"%d%m%y-%H%M%S"`
 
 # file extension type array
@@ -35,7 +35,7 @@ CPUS=$(grep -c "processor" /proc/cpuinfo)
 #############
 SCRIPT_DIR=$(readlink -f $(dirname ${BASH_SOURCE[0]}))
 
-if [ ! -f /usr/local/bin/brotli ]; then
+if [[ ! -f /usr/local/bin/brotli || -f /usr/local/bin/bro ]]; then
   echo
   echo "/usr/local/bin/brotli not found"
   echo "installing brotli binary"
@@ -43,8 +43,13 @@ if [ ! -f /usr/local/bin/brotli ]; then
   sleep 3
   if [ -d /svr-setup ]; then
     cd /svr-setup
+    rm -rf /svr-setup/brotli
   else
     cd /usr/local/src
+    rm -rf /usr/local/src/brotli
+  fi
+  if [ -f /usr/local/bin/bro ]; then
+    rm -rf /usr/local/bin/bro
   fi
   git clone https://github.com/google/brotli.git
   cd brotli
@@ -52,9 +57,9 @@ if [ ! -f /usr/local/bin/brotli ]; then
   make -j${CPUS}
   make install
   if [ -d /svr-setup ]; then
-    ls -lah /svr-setup/brotli/bin/brotli
+    ls -lah /usr/local/bin/brotli
   else
-    ls -lah /usr/local/src/brotli/bin/brotli
+    ls -lah /usr/local/bin/brotli
   fi
   # \cp -af bin/brotli /usr/local/bin/brotli
   BROTLI_BIN='/usr/local/bin/brotli'
