@@ -6,7 +6,7 @@
 ######################################################
 # variables
 #############
-VERSION='0.5'
+VERSION='0.6'
 DT=`date +"%d%m%y-%H%M%S"`
 
 # file extension type array
@@ -18,7 +18,7 @@ FILE_MINSIZE='1048576'
 USER=nginx
 GROUP=nginx
 CHMOD=644
-DBEUG=y
+DEBUG=y
 TIMEDSTATS=n
 
 # Brotli settings
