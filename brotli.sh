@@ -6,7 +6,7 @@
 ######################################################
 # variables
 #############
-VERSION='0.6'
+VERSION='0.7'
 DT=`date +"%d%m%y-%H%M%S"`
 
 # file extension type array
@@ -131,7 +131,7 @@ brotli_compress() {
         if [[ "$DEBUG" = [yY] ]]; then
           BROTLI_BINSHORT=$(echo $BROTLI_BIN | sed -e 's|\/usr\/local\/bin\/||')
           echo -n "[br compress $DETECT_EXT $FILESIZE bytes]: "
-          echo "$BROTLI_BINSHORT $BROTLI_BINOPT --input ${f} --output ${f}.br"
+          echo "$BROTLI_BINSHORT $BROTLI_BINOPT --input ${f} --output=${f}.br"
           # echo "chown ${USER}:${GROUP} ${f}.br"
           # echo "chmod $CHMOD ${f}.br"
         fi
